@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherWatch</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1b1f2e;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #5a34f0, #db4db2);
+            width: 100%;
+            text-align: center;
+            padding: 40px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero h1 {
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #5a34f0;
+            border-radius: 8px;
+            background: #2c3045;
+            color: #fff;
+            margin-right: 10px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .button {
+            background-color: #db4db2;
+            color: #fff;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .button:hover {
+            background-color: #ff62c5;
+        }
+
+        .weather-container {
+            margin-top: 20px;
+            display: grid;
+            gap: 20px;
+            grid-template-columns: 1fr;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .weather-card {
+            background: #4c5686;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .weather-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .weather-icon {
+            width: 60px;
+            height: 60px;
+            margin-right: 20px;
+        }
+
+        .weather-info h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            color: #f2f2f2;
+        }
+
+        .notification {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .is-success {
+            background-color: #5cb85c;
+            color: #fff;
+        }
+
+        .is-danger {
+            background-color: #d9534f;
+            color: #fff;
+        }
+        .delete {
+            background-color: transparent; 
+            border: none; 
+            color: #e8160f; 
+            font-size: 1.2rem; 
+            cursor: pointer;  
+            transition: 0.3s;
+        }
+
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <h1>WeatherWatch - How's the weather in your city?</h1>
+    </section>
+
+    <div class="form-container">
+        <form method="POST">
+            <input class="input" name="city" type="text" placeholder="Enter city name"><br>
+            <br>
+            <center><button class="button" type="submit">Add City</button></center><br>
+        </form>
+        {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="notification {{ 'is-success' if category == 'success' else 'is-danger' }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="weather-container">
+        {% for weather in weather_data %}
+        <div class="weather-card">
+            <img class="weather-icon" src="http://openweathermap.org/img/w/{{ weather.icon }}.png" alt="Weather Icon">
+            <div class="weather-info">
+                <h2>{{ weather.city }}</h2>
+                <p>{{ weather.temperature }}° C - {{ weather.description }}</p>
+            </div>
+            <div class="media-right">
+                <a href="{{ url_for('delete_city', name=weather.city) }}">
+                    <button class="delete">x</button>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
